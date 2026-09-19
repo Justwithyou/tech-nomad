@@ -1,0 +1,64 @@
+---
+---
+
+<div class="terminal">
+  <div class="terminal-bar">
+    <div class="tb tb-r"></div>
+    <div class="tb tb-y"></div>
+    <div class="tb tb-g"></div>
+    <span>~ status</span>
+  </div>
+  <div class="terminal-body">
+    <div><span class="term-prompt">➜</span> <span class="term-path">~</span> <span class="term-cmd">cat status</span></div>
+    <div class="term-out">building: <span class="term-val-cyan">Tech-Nomad</span></div>
+    <div class="term-out">writing: <span class="term-val-purple">Tech-Nomad</span></div>
+    <div class="term-out">learning: <span class="term-val-amber">AI Agent</span></div>
+    <div><span class="term-prompt">➜</span> <span class="term-path">~</span> <span class="term-cursor">▋</span></div>
+  </div>
+</div>
+
+<style>
+  .terminal {
+    background: var(--glass-bg);
+    border: 1px solid var(--border-soft);
+    border-radius: 12px;
+    overflow: hidden;
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.08), 0 0 40px rgba(34,211,238,0.06);
+    height: fit-content;
+    align-self: center;
+  }
+  .terminal-bar {
+    padding: 0.45em 0.8em;
+    background: var(--glass-bar-bg);
+    border-bottom: 1px solid var(--border-faint);
+    display: flex;
+    gap: 6px;
+    align-items: center;
+  }
+  .tb { width: 10px; height: 10px; border-radius: 50%; }
+  .tb-r { background: var(--term-red); }
+  .tb-y { background: var(--term-yellow); }
+  .tb-g { background: var(--term-green); }
+  .terminal-bar span {
+    margin-left: 0.6em;
+    font-size: 0.68em;
+    color: var(--text-meta);
+    font-family: var(--font-mono);
+  }
+  .terminal-body {
+    padding: 0.75em 0.85em;
+    font-family: var(--font-mono);
+    font-size: 0.76em;
+    line-height: 1.7;
+  }
+  .term-prompt { color: var(--cyan); }
+  .term-path { color: var(--indigo-light); }
+  .term-cmd { color: var(--text-meta); }
+  .term-out { color: var(--text-body); }
+  .term-val-cyan { color: var(--cyan); }
+  .term-val-purple { color: var(--purple); }
+  .term-val-amber { color: var(--amber); }
+  .term-cursor { color: var(--green); }
+</style>

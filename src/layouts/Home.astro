@@ -1,0 +1,169 @@
+﻿---
+import { getCollection } from 'astro:content';
+import Terminal from '../components/Terminal.astro';
+import SectionHeader from '../components/SectionHeader.astro';
+import PostCard from '../components/PostCard.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import TagCloud from '../components/TagCloud.astro';
+
+const base = import.meta.env.BASE_URL;
+
+const posts = (await getCollection('blog', ({ data }) => !data.draft))
+  .sort((a, b) => b.data.published.getTime() - a.data.published.getTime());
+const latest = posts.slice(0, 5);
+
+const allTags = Array.from(
+  new Set(posts.flatMap((p) => p.data.tags ?? []))
+).slice(0, 12);
+
+const projects = [
+  { name: 'aggregate-graph', desc: '数据聚合图可视化', url: 'https://drawhub-pied.vercel.app/', github: 'https://github.com/Justwithyou/aggregate-graph', featured: true, accent: 'cyan' },
+  { name: 'markdown-editor', desc: '在线 Markdown 编辑器', github: 'https://github.com/Justwithyou/Markdown-Editor', featured: false, accent: 'indigo' },
+];
+---
+
+<section class="hero">
+  <div class="hero-left">
+    <div class="hero-comment">// whoami</div>
+    <h1 class="hero-title">
+      Hi, I'm<br /><span class="name">Zhou</span>
+    </h1>
+    <p class="hero-desc">
+      探索 AI 前沿，深耕全栈开发，构建开发者工具。<br />
+      目前关注 AI Agent 与智能体协作。
+    </p>
+    <div class="hero-tags">
+      <span class="tag-pill tag-ai">AI</span>
+      <span class="tag-pill tag-fe">全栈</span>
+      <span class="tag-pill tag-tools">工具</span>
+    </div>
+  </div>
+  <div class="hero-right">
+    <Terminal />
+  </div>
+</section>
+
+<div class="two-col">
+  <div class="posts">
+    <SectionHeader title="latest_posts" />
+    <div class="post-list">
+      {latest.map((post) => <PostCard post={post} />)}
+    </div>
+    <div class="view-all"><span class="arrow">›</span> view all posts →</div>
+  </div>
+  <aside class="sidebar">
+    <SectionHeader title="projects" />
+    <div class="proj-list">
+      {projects.map((p) => <ProjectCard project={p} />)}
+    </div>
+    <div style="margin-top: 1.4em;">
+      <SectionHeader title="tags" />
+    </div>
+    <TagCloud tags={allTags} />
+  </aside>
+</div>
+
+<style>
+  .hero {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+    gap: 1.5em;
+    padding: 3.5em 0 3em;
+    border-bottom: 1px solid var(--border-faint);
+  }
+  .hero-comment {
+    font-size: 0.75em;
+    font-family: var(--font-mono);
+    color: var(--cyan);
+    margin-bottom: 1em;
+    letter-spacing: 0.08em;
+    opacity: 0.9;
+  }
+  .hero-title {
+    font-size: 3em;
+    font-weight: 900;
+    color: var(--text-title);
+    line-height: 1.15;
+    letter-spacing: -0.025em;
+  }
+  .hero-title .name {
+    background: linear-gradient(90deg, var(--cyan), var(--indigo), var(--purple));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+  }
+  .hero-desc {
+    font-size: 1em;
+    color: var(--text-body);
+    margin-top: 1.25em;
+    line-height: 1.7;
+    max-width: 440px;
+    font-weight: 400;
+  }
+  .hero-tags {
+    margin-top: 1.375em;
+    display: flex;
+    gap: 0.625em;
+    flex-wrap: wrap;
+  }
+  .tag-pill {
+    font-size: 0.78em;
+    padding: 0.375em 0.875em;
+    border-radius: 20px;
+    font-weight: 700;
+  }
+  .tag-ai {
+    background: linear-gradient(135deg, var(--cyan), var(--indigo-deep));
+    color: var(--bg);
+  }
+  .tag-fe {
+    background: rgba(99, 102, 241, 0.18);
+    color: var(--indigo-light);
+    border: 1px solid rgba(99, 102, 241, 0.4);
+  }
+  .tag-tools {
+    background: rgba(34, 211, 238, 0.15);
+    color: #67e8f9;
+    border: 1px solid rgba(34, 211, 238, 0.4);
+  }
+
+  .two-col {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+    margin-top: 0.5em;
+  }
+  .posts {
+    padding: 2em 2em 2em 0;
+  }
+  .proj-list {
+    margin-top: 0;
+  }
+  .view-all {
+    margin-top: 1.125em;
+    font-size: 0.8em;
+    color: var(--text-meta);
+    cursor: pointer;
+  }
+  .view-all:hover { color: var(--cyan); }
+  .view-all .arrow { color: var(--cyan); }
+
+  .sidebar {
+    padding: 2em 0 2em 2em;
+    border-left: 1px solid var(--border-faint);
+  }
+
+  @media (max-width: 768px) {
+    .hero { grid-template-columns: 1fr; padding: 1.2em 0 1em; }
+    .two-col { grid-template-columns: 1fr; }
+    .sidebar {
+      padding-left: 0;
+      border-left: none;
+      border-top: 1px solid var(--border-faint);
+      padding-top: 1.2em;
+      margin-top: 1.2em;
+    }
+    .posts { padding-right: 0; }
+    .hero-title { font-size: 1.9em; }
+  }
+</style>

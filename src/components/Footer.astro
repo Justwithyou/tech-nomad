@@ -1,0 +1,24 @@
+---
+interface Props {
+  year: number;
+  deployDate: string;
+}
+const { year, deployDate } = Astro.props;
+---
+
+<footer>
+  <span>© {year} Tech-Nomad· — built under the stars</span>
+  <span>last_deploy: {deployDate}</span>
+</footer>
+
+<style>
+  footer {
+    padding: 3em 0 1.25em;
+    border-top: 1px solid var(--border-faint);
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.72em;
+    color: var(--text-footer);
+    font-family: var(--font-mono);
+  }
+</style>

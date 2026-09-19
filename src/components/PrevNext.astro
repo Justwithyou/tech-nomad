@@ -1,0 +1,70 @@
+---
+// Prev/Next post navigation cards.
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  prev: CollectionEntry<'blog'> | null;
+  next: CollectionEntry<'blog'> | null;
+}
+const { prev, next } = Astro.props;
+const base = import.meta.env.BASE_URL;
+---
+
+<div class="prev-next">
+  {prev ? (
+    <a class="pn-card glass" href={base + 'blog/' + prev.slug}>
+      <span class="label">← prev</span>
+      <span class="title">{prev.data.title}</span>
+    </a>
+  ) : <span class="pn-card empty"></span>}
+  {next ? (
+    <a class="pn-card glass next" href={base + 'blog/' + next.slug}>
+      <span class="label">next →</span>
+      <span class="title">{next.data.title}</span>
+    </a>
+  ) : <span class="pn-card empty"></span>}
+</div>
+
+<style>
+  .prev-next {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-top: 40px;
+  }
+  .pn-card {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 16px 18px;
+    border-radius: 12px;
+    color: inherit;
+    transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease;
+  }
+  .pn-card.empty { visibility: hidden; }
+  .pn-card:hover {
+    transform: translateY(-2px);
+    border-color: var(--border-soft);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35), 0 0 24px rgba(34, 211, 238, 0.08);
+  }
+  .label {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text-meta);
+  }
+  .title {
+    color: var(--text-primary);
+    font-size: 15px;
+    font-weight: 600;
+    line-height: 1.4;
+  }
+  .next {
+    text-align: right;
+    align-items: flex-end;
+  }
+
+  @media (max-width: 768px) {
+    .prev-next { grid-template-columns: 1fr; }
+    .next { text-align: left; align-items: flex-start; }
+  }
+</style>

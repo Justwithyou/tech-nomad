@@ -1,0 +1,105 @@
+---
+interface Props {
+  project: {
+    name: string;
+    desc: string;
+    url?: string;
+    github: string;
+    featured: boolean;
+    accent: string;
+  };
+}
+const { project } = Astro.props;
+const { name, desc, url, github, featured, accent } = project;
+---
+
+<div class={`project-card ${featured ? 'project-featured' : 'project-normal'} accent-${accent || 'cyan'}`}>
+  <div class="project-head">
+    <div>
+      <div class={`project-name ${featured ? 'name-cyan' : 'name-' + (accent || 'indigo')}`}>{name}</div>
+      <div class="project-desc">{desc}</div>
+    </div>
+    <div class="project-links">
+      {url && <a class="project-badge" href={url} target="_blank" rel="noopener">↗ 访问</a>}
+      <a class="project-badge" href={github} target="_blank" rel="noopener">↗ github</a>
+    </div>
+  </div>
+</div>
+
+<style>
+  .project-card {
+    margin-bottom: 1em;
+    padding: 1.125em;
+    border-radius: 12px;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    transition: all 0.25s ease;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+  }
+  .project-card::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle at 50% 50%, rgba(34, 211, 238, 0.12), transparent 60%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+  }
+  .project-card:hover::before { opacity: 1; }
+  .project-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.3), 0 0 24px rgba(34,211,238,0.15), 0 0 48px rgba(34,211,238,0.08);
+  }
+  .project-featured {
+    background: linear-gradient(135deg, rgba(34,211,238,0.18), rgba(99,102,241,0.18));
+    border: 1px solid var(--border-cyan);
+  }
+  .project-featured:hover {
+    border-color: rgba(34,211,238,0.5);
+  }
+  .project-normal {
+    background: var(--project-normal-bg);
+    border: 1px solid var(--border-soft);
+  }
+  .project-normal:hover {
+    border-color: rgba(99,102,241,0.4);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.3), 0 0 24px rgba(129,140,248,0.12), 0 0 48px rgba(129,140,248,0.06);
+  }
+  .project-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    z-index: 1;
+  }
+  .name-cyan { color: var(--cyan); }
+  .name-indigo { color: var(--indigo-light); }
+  .name-purple { color: var(--purple); }
+  .project-name {
+    font-size: 0.9em;
+    font-weight: 700;
+  }
+  .project-desc {
+    font-size: 0.72em;
+    color: var(--text-muted);
+    margin-top: 0.25em;
+  }
+  .project-links {
+    display: flex;
+    gap: 0.75em;
+    white-space: nowrap;
+    margin-left: 0.75em;
+  }
+  .project-badge {
+    font-size: 0.68em;
+    font-family: var(--font-mono);
+    color: var(--cyan);
+    text-decoration: none;
+  }
+  .project-badge:hover { text-decoration: underline; }
+</style>

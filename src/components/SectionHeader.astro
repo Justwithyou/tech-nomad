@@ -1,0 +1,29 @@
+---
+interface Props {
+  title: string;
+}
+const { title } = Astro.props;
+---
+
+<div class="section-header">
+  <span>// {title}</span>
+  <div class="line"></div>
+</div>
+
+<style>
+  .section-header {
+    font-size: 0.75em;
+    font-family: var(--font-mono);
+    color: var(--cyan);
+    margin-bottom: 1.125em;
+    letter-spacing: 0.08em;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .line {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, rgba(34,211,238,0.4), transparent);
+  }
+</style>

@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>深邃星空 — 背景预览</title>
+<style>
+  html, body {
+    margin: 0;
+    height: 100%;
+    overflow: hidden;
+    background: #010103;
+  }
+  canvas {
+    display: block;
+    width: 100vw;
+    height: 100vh;
+  }
+</style>
+</head>
+<body>
+<canvas id="sky"></canvas>
+
+<script>
+(function () {
+  'use strict';
+
+  const TAU = Math.PI * 2;
+  const canvas = document.getElementById('sky');
+  const ctx = canvas.getContext('2d');
+
+  let W = 0, H = 0, dpr = 1;
+  let bgCanvas = null;
+  let stars = [];
+  let meteors = [];
+  let nextMeteorAt = 0;
+  let lastTime = 0;
+
+  const rand = (a, b) => a + Math.random() * (b - a);
+
+  function buildBackground() {
+    bgCanvas = document.createElement('canvas');
+    bgCanvas.width = Math.max(1, Math.floor(W * dpr));
+    bgCanvas.height = Math.max(1, Math.floor(H * dpr));
+    const b = bgCanvas.getContext('2d');
+    b.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+    const base = b.createLinearGradient(0, 0, 0, H);
+    base.addColorStop(0, '#01020a');
+    base.addColorStop(0.45, '#040712');
+    base.addColorStop(1, '#000002');
+    b.fillStyle = base;
+    b.fillRect(0, 0, W, H);
+
+    b.globalCompositeOperation = 'lighter';
+    const blobs = [
+      { x: 0.16, y: 0.18, r: 0.62, rgb: '52, 72, 150', a: 0.085 },
+      { x: 0.84, y: 0.28, r: 0.55, rgb: '90, 44, 130', a: 0.060 },
+      { x: 0.55, y: 0.88, r: 0.72, rgb: '20, 66, 118', a: 0.050 },
+      { x: 0.06, y: 0.82, r: 0.48, rgb: '70, 38, 108', a: 0.042 },
+      { x: 0.62, y: 0.12, r: 0.40, rgb: '26, 90, 130', a: 0.036 }
+    ];
+    const maxR = Math.max(W, H);
+    for (const o of blobs) {
+      const g = b.createRadialGradient(o.x * W, o.y * H, 0, o.x * W, o.y * H, o.r * maxR);
+      g.addColorStop(0, `rgba(${o.rgb}, ${o.a})`);
+      g.addColorStop(0.5, `rgba(${o.rgb}, ${o.a * 0.28})`);
+      g.addColorStop(1, `rgba(${o.rgb}, 0)`);
+      b.fillStyle = g;
+      b.fillRect(0, 0, W, H);
+    }
+    b.globalCompositeOperation = 'source-over';
+  }
+
+  function makeSprite(rgb, size) {
+    const c = document.createElement('canvas');
+    c.width = c.height = size;
+    const g = c.getContext('2d');
+    const cx = size / 2;
+    const grad = g.createRadialGradient(cx, cx, 0, cx, cx, cx);
+    grad.addColorStop(0, `rgba(${rgb}, 1)`);
+    grad.addColorStop(0.22, `rgba(${rgb}, 0.30)`);
+    grad.addColorStop(0.55, `rgba(${rgb}, 0.06)`);
+    grad.addColorStop(1, `rgba(${rgb}, 0)`);
+    g.fillStyle = grad;
+    g.beginPath();
+    g.arc(cx, cx, cx, 0, TAU);
+    g.fill();
+    return c;
+  }
+
+  const spriteCache = {};
+
+  function createStars() {
+    stars = [];
+    const count = Math.max(130, Math.min(900, Math.round((W * H) / 3000)));
+
+    for (let i = 0; i < count; i++) {
+      const isBright = Math.random() < 0.16;
+      let r;
+      if (isBright) {
+        r = Math.pow(Math.random(), 1.6) * 1.3 + 0.55;
+      } else {
+        r = Math.pow(Math.random(), 3.1) * 1.15 + 0.15;
+      }
+
+      const tint = Math.random();
+      let color;
+      if (tint < 0.16) color = '176, 204, 248';
+      else if (tint < 0.25) color = '248, 216, 176';
+      else color = '236, 240, 255';
+
+      let sprite = null;
+      if (r > 0.85) {
+        const key = color + '|40';
+        if (!spriteCache[key]) spriteCache[key] = makeSprite(color, 40);
+        sprite = spriteCache[key];
+      }
+
+      let base;
+      if (isBright) {
+        base = rand(0.62, 1.05) * (0.70 + r * 0.25);
+      } else {
+        base = rand(0.08, 0.42) * (0.55 + r * 0.30);
+      }
+
+      stars.push({
+        x: Math.random() * W,
+        y: Math.random() * H,
+        r: r,
+        color: color,
+        base: base,
+        phase: Math.random() * TAU,
+        speed: rand(0.45, 2.0),
+        sprite: sprite
+      });
+    }
+  }
+
+  function drawStars(t) {
+    for (let i = 0; i < stars.length; i++) {
+      const s = stars[i];
+      const tw = 0.62 + 0.38 * Math.sin(t * s.speed + s.phase);
+      const a = Math.min(1, s.base * tw);
+      if (a <= 0.012) continue;
+
+      if (s.sprite) {
+        const R = s.r * 7;
+        ctx.globalAlpha = a * 0.65;
+        ctx.drawImage(s.sprite, s.x - R, s.y - R, R * 2, R * 2);
+        ctx.globalAlpha = 1;
+      }
+
+      ctx.fillStyle = `rgba(${s.color}, ${a})`;
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.r, 0, TAU);
+      ctx.fill();
+    }
+  }
+
+  function spawnMeteor() {
+    const angle = rand(Math.PI * 0.15, Math.PI * 0.35);
+    const dx = Math.cos(angle);
+    const dy = Math.sin(angle);
+
+    const speedScale = Math.min(1.6, Math.max(0.55, Math.min(W, H) / 900));
+    const speed = rand(620, 1150) * speedScale;
+
+    const x = rand(-0.15 * W, W * 0.8);
+    const y = rand(-0.12 * H, H * 0.5);
+
+    const maxLife = rand(0.9, 1.9);
+
+    meteors.push({
+      x: x,
+      y: y,
+      dx: dx,
+      dy: dy,
+      vx: dx * speed,
+      vy: dy * speed,
+      len: rand(150, 330) * (0.7 + speedScale * 0.5),
+      width: rand(1.0, 2.2),
+      life: 0,
+      maxLife: maxLife
+    });
+  }
+
+  function drawMeteor(m, alpha) {
+    const tx = m.x - m.dx * m.len;
+    const ty = m.y - m.dy * m.len;
+
+    const g = ctx.createLinearGradient(m.x, m.y, tx, ty);
+    g.addColorStop(0, `rgba(238, 245, 255, ${0.70 * alpha})`);
+    g.addColorStop(0.14, `rgba(176, 206, 245, ${0.42 * alpha})`);
+    g.addColorStop(0.48, `rgba(124, 164, 232, ${0.14 * alpha})`);
+    g.addColorStop(1, 'rgba(100, 140, 220, 0)');
+
+    ctx.strokeStyle = g;
+    ctx.lineWidth = m.width;
+    ctx.lineCap = 'round';
+    ctx.beginPath();
+    ctx.moveTo(m.x, m.y);
+    ctx.lineTo(tx, ty);
+    ctx.stroke();
+
+    const R = m.width * 5;
+    const gg = ctx.createRadialGradient(m.x, m.y, 0, m.x, m.y, R);
+    gg.addColorStop(0, `rgba(240, 246, 255, ${0.62 * alpha})`);
+    gg.addColorStop(0.32, `rgba(190, 214, 248, ${0.20 * alpha})`);
+    gg.addColorStop(1, 'rgba(150, 190, 245, 0)');
+    ctx.fillStyle = gg;
+    ctx.beginPath();
+    ctx.arc(m.x, m.y, R, 0, TAU);
+    ctx.fill();
+  }
+
+  function render(dt, now) {
+    const t = now / 1000;
+
+    ctx.globalCompositeOperation = 'source-over';
+    ctx.globalAlpha = 1;
+    if (bgCanvas) {
+      ctx.drawImage(bgCanvas, 0, 0, W, H);
+    } else {
+      ctx.fillStyle = '#010103';
+      ctx.fillRect(0, 0, W, H);
+    }
+
+    drawStars(t);
+
+    if (now >= nextMeteorAt) {
+      spawnMeteor();
+      spawnMeteor();
+      spawnMeteor();
+      if (Math.random() < 0.3) spawnMeteor();
+      nextMeteorAt = now + rand(1200, 4200);
+    }
+
+    if (meteors.length) {
+      ctx.globalCompositeOperation = 'lighter';
+      for (let i = meteors.length - 1; i >= 0; i--) {
+        const m = meteors[i];
+        m.life += dt;
+        m.x += m.vx * dt;
+        m.y += m.vy * dt;
+
+        const p = m.life / m.maxLife;
+        if (p >= 1 || m.x > W + m.len * 2 || m.y > H + m.len * 2) {
+          meteors.splice(i, 1);
+          continue;
+        }
+
+        let a = 1;
+        if (p < 0.12) a = p / 0.12;
+        else if (p > 0.62) a = Math.max(0, 1 - (p - 0.62) / 0.38);
+
+        drawMeteor(m, a);
+      }
+      ctx.globalCompositeOperation = 'source-over';
+    }
+  }
+
+  function frame(now) {
+    const dt = Math.min((now - lastTime) / 1000, 0.05);
+    lastTime = now;
+    render(dt, now);
+    requestAnimationFrame(frame);
+  }
+
+  function resize() {
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    W = window.innerWidth;
+    H = window.innerHeight;
+
+    canvas.width = Math.floor(W * dpr);
+    canvas.height = Math.floor(H * dpr);
+    canvas.style.width = W + 'px';
+    canvas.style.height = H + 'px';
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+    buildBackground();
+    createStars();
+  }
+
+  let resizeTimer = null;
+  window.addEventListener('resize', function () {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(resize, 150);
+  });
+
+  resize();
+  lastTime = performance.now();
+  nextMeteorAt = lastTime + 900;
+  requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>

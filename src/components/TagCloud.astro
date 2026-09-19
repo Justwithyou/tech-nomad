@@ -1,0 +1,36 @@
+---
+interface Props {
+  tags: string[];
+}
+const { tags } = Astro.props;
+const accents = ['cyan', 'indigo', 'purple', 'pink'];
+---
+
+<div class="tag-cloud">
+  {tags.map((tag, i) => {
+    const accent = accents[i % accents.length];
+    return (
+      <span class={`tag-chip chip-${accent}`}>#{tag}</span>
+    );
+  })}
+</div>
+
+<style>
+  .tag-cloud {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+    margin-top: 6px;
+  }
+  .tag-chip {
+    font-size: 0.72em;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-weight: 600;
+    font-family: var(--font-mono);
+  }
+  .chip-cyan { color: var(--cyan); background: rgba(34,211,238,0.1); border: 1px solid rgba(34,211,238,0.3); }
+  .chip-indigo { color: var(--indigo); background: rgba(129,140,248,0.1); border: 1px solid rgba(129,140,248,0.3); }
+  .chip-purple { color: var(--purple); background: rgba(168,85,247,0.1); border: 1px solid rgba(168,85,247,0.3); }
+  .chip-pink { color: var(--pink); background: rgba(244,114,182,0.1); border: 1px solid rgba(244,114,182,0.3); }
+</style>

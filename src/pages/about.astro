@@ -1,0 +1,100 @@
+---
+import Base from '../layouts/Base.astro';
+import SectionHeader from '../components/SectionHeader.astro';
+---
+
+<Base title="about — Tech-Nomad·" active="about">
+  <SectionHeader title="about" />
+  <article class="glass bio">
+    <div class="identity">
+      <span class="avatar">YN</span>
+      <div class="who">
+        <h1 class="name">Your Name</h1>
+        <p class="role">developer · writer · nomad</p>
+      </div>
+    </div>
+
+    <p>
+      Hi — I'm a developer drifting between code, ink, and starlight. I build
+      small tools, write about AI safety and tooling, and keep a slow log of
+      what I learn off the grid.
+    </p>
+    <p>
+      This site is a personal starfield — part notebook, part workshop, part
+      signal flare. If something here is useful, take it and pass it on.
+    </p>
+
+    <ul class="facts">
+      <li><span class="k">// location</span><span class="v">off-grid, +08:00</span></li>
+      <li><span class="k">// stack</span><span class="v">astro · ts · rust · go</span></li>
+      <li><span class="k">// reading</span><span class="v">llm-safety papers</span></li>
+      <li><span class="k">// contact</span><span class="v">echo "hi" | mail nomad@</span></li>
+    </ul>
+  </article>
+</Base>
+
+<style>
+  .bio {
+    padding: 1.75em 2em;
+    color: var(--text-body);
+    font-size: 1em;
+    line-height: 1.85;
+  }
+  .bio p { margin: 0.75em 0; }
+
+  .identity {
+    display: flex;
+    align-items: center;
+    gap: 0.875em;
+    margin-bottom: 1.375em;
+    padding-bottom: 1.125em;
+    border-bottom: 1px solid var(--border-faint);
+  }
+  .avatar {
+    width: 3.25em;
+    height: 3.25em;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-mono);
+    font-size: 1.125em;
+    font-weight: 700;
+    color: #0a0a12;
+    background: linear-gradient(135deg, var(--cyan), var(--indigo-light), var(--purple));
+  }
+  .name {
+    color: var(--text-title);
+    font-size: 1.5em;
+    font-weight: 800;
+    margin-bottom: 0.125em;
+  }
+  .role {
+    font-family: var(--font-mono);
+    font-size: 0.75em;
+    color: var(--text-meta);
+  }
+
+  .facts {
+    list-style: none;
+    padding: 0;
+    margin: 1.375em 0 0;
+    font-family: var(--font-mono);
+    font-size: 0.8125em;
+  }
+  .facts li {
+    display: flex;
+    gap: 1em;
+    padding: 0.375em 0;
+    border-bottom: 1px dashed var(--border-faint);
+  }
+  .facts .k { color: var(--cyan); min-width: 7.5em; }
+  .facts .v { color: var(--text-body); }
+
+  @media (max-width: 768px) {
+    .bio { padding: 1.375em 1.25em; font-size: 0.9375em; }
+    .name { font-size: 1.25em; }
+    .facts li { flex-direction: column; gap: 0.125em; }
+    .facts .k { min-width: 0; }
+  }
+</style>

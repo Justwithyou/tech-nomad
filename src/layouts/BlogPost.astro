@@ -1,0 +1,363 @@
+---
+// Blog post layout — article + sticky TOC + prev/next + share buttons.
+import type { CollectionEntry } from 'astro:content';
+import type { MarkdownHeading } from 'astro';
+import TOC from '../components/TOC.astro';
+import PrevNext from '../components/PrevNext.astro';
+import SectionHeader from '../components/SectionHeader.astro';
+
+interface Props {
+  post: CollectionEntry<'blog'>;
+  headings: MarkdownHeading[];
+  prev: CollectionEntry<'blog'> | null;
+  next: CollectionEntry<'blog'> | null;
+}
+const { post, headings, prev, next } = Astro.props;
+const base = import.meta.env.BASE_URL;
+const accent = post.data.accent ?? 'cyan';
+const dateStr = post.data.published.toISOString().slice(0, 10).replace(/-/g, '.');
+---
+
+<div class={`post-wrap accent-${accent}`}>
+  <a class="back" href={base + 'blog'}>← cd ../blog</a>
+
+  <div class="article-grid">
+    <article class="article glass">
+      <header class="head">
+        <div class="meta">
+          <time class="date">{dateStr}</time>
+          <span class="dot" aria-hidden="true">·</span>
+          <span>5 min read</span>
+          {post.data.tags.map((t) => (
+            <span class="meta-tag">#{t}</span>
+          ))}
+        </div>
+        <h1 class="title">{post.data.title}</h1>
+        <p class="subtitle">{post.data.description}</p>
+        <div class="author-row">
+          <span class="avatar">{post.data.authorInitials}</span>
+          <div class="author-info">
+            <span class="author-name">{post.data.author}</span>
+            <span class="author-role">{post.data.authorRole}</span>
+          </div>
+        </div>
+      </header>
+
+      <div class="article-body">
+        <slot />
+      </div>
+
+      <footer class="article-footer">
+        {post.data.tags && post.data.tags.length > 0 && (
+          <div class="tags">
+            {post.data.tags.map((t) => <span class="tag">#{t}</span>)}
+          </div>
+        )}
+        <div class="actions">
+          <button class="btn" data-action="share">$ share</button>
+          <button class="btn" data-action="copy">$ copy_url</button>
+        </div>
+      </footer>
+
+      <PrevNext prev={prev} next={next} />
+    </article>
+
+    <TOC headings={headings} />
+  </div>
+
+  <button class="back-top" aria-label="回到顶部">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M12 19V5M5 12l7-7 7 7" />
+    </svg>
+    <span class="back-top-tip">回到顶部</span>
+  </button>
+</div>
+
+<style>
+  .back {
+    display: inline-block;
+    margin: 1.75em 0 1.25em;
+    font-family: var(--font-mono);
+    font-size: 0.8125em;
+    color: var(--text-meta);
+    transition: color .2s ease;
+  }
+  .back:hover { color: var(--cyan); }
+
+  .article-grid {
+    display: grid;
+    grid-template-columns: 1fr 240px;
+    gap: 32px;
+    align-items: start;
+  }
+  .article {
+    padding: 1.75em 2em;
+    border-left: 3px solid var(--accent);
+  }
+
+  .head { margin-bottom: 2.5em; padding-bottom: 2em; border-bottom: 1px solid var(--border-faint); }
+  .meta {
+    display: flex;
+    align-items: center;
+    gap: 0.875em;
+    font-family: var(--font-mono);
+    font-size: 0.78em;
+    color: var(--text-meta);
+    margin-bottom: 1.25em;
+  }
+  .date { color: var(--accent); }
+  .dot { color: var(--sep); }
+  .meta-tag {
+    color: var(--indigo-light);
+    background: rgba(99, 102, 241, 0.15);
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    padding: 0.125em 0.625em;
+    border-radius: 12px;
+    font-size: 0.9em;
+  }
+
+  .title {
+    font-size: 2.4em;
+    font-weight: 900;
+    color: var(--text-title);
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    margin-bottom: 0.75em;
+  }
+  .subtitle {
+    color: var(--text-muted);
+    font-size: 1em;
+    line-height: 1.6;
+    margin-bottom: 1.5em;
+  }
+
+  .author-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75em;
+    padding: 0.75em 0;
+    border-top: 1px solid var(--border-faint);
+    border-bottom: 1px solid var(--border-faint);
+  }
+  .avatar {
+    width: 2.25em;
+    height: 2.25em;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-mono);
+    font-size: 0.8125em;
+    font-weight: 700;
+    color: #0a0a12;
+    background: linear-gradient(135deg, var(--cyan), var(--indigo-light), var(--purple));
+  }
+  .author-info {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.4;
+  }
+  .author-name {
+    font-size: 0.8125em;
+    color: var(--text-primary);
+    font-weight: 600;
+  }
+  .author-role {
+    font-family: var(--font-mono);
+    font-size: 0.6875em;
+    color: var(--text-meta);
+  }
+
+  .article-body {
+    color: var(--text-body);
+    font-size: 1em;
+    line-height: 1.85;
+    margin: 1.5em 0;
+  }
+  .article-body :global(h2) {
+    color: var(--text-title);
+    font-size: 1.5em;
+    font-weight: 800;
+    margin: 2.5em 0 1em;
+    padding-left: 1em;
+    border-left: 3px solid var(--cyan);
+  }
+  .article-body :global(h3) {
+    color: var(--text-title);
+    font-size: 1.125em;
+    font-weight: 700;
+    margin: 1.375em 0 0.625em;
+  }
+  .article-body :global(p) { margin: 0.625em 0; }
+  .article-body :global(a) { color: var(--cyan); border-bottom: 1px solid rgba(34,211,238,0.25); }
+  .article-body :global(ul),
+  .article-body :global(ol) { margin: 0.75em 0 0.75em 1.375em; }
+  .article-body :global(li) { margin: 0.25em 0; }
+  .article-body :global(blockquote) {
+    border-left: 3px solid var(--accent);
+    padding: 0.25em 1em;
+    color: var(--text-muted);
+    margin: 1em 0;
+    background: var(--glass-bg);
+    border-radius: 0 8px 8px 0;
+  }
+  .article-body :global(code) {
+    font-family: var(--font-mono);
+    font-size: 0.85em;
+    background: var(--glass-bar-bg);
+    border: 1px solid var(--border-faint);
+    padding: 0.0625em 0.375em;
+    border-radius: 4px;
+    color: var(--cyan);
+  }
+  .article-body :global(pre) {
+    padding: 0.875em 1em;
+    border-radius: 8px;
+    border: 1px solid var(--border-faint);
+    overflow-x: auto;
+    margin: 1em 0;
+  }
+  .article-body :global(pre code) {
+    background: transparent;
+    border: none;
+    padding: 0;
+    color: inherit;
+  }
+
+  .article-footer {
+    margin-top: 1.75em;
+    padding-top: 1.125em;
+    border-top: 1px solid var(--border-faint);
+    display: flex;
+    flex-direction: column;
+    gap: 0.875em;
+  }
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5em;
+  }
+  .tag {
+    font-family: var(--font-mono);
+    font-size: 0.75em;
+    color: var(--accent);
+    background: color-mix(in srgb, var(--accent) 8%, transparent);
+    border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+    border-radius: 8px;
+    padding: 0.1875em 0.5625em;
+  }
+  .actions {
+    display: flex;
+    gap: 0.625em;
+  }
+  .btn {
+    font-family: var(--font-mono);
+    font-size: 0.75em;
+    color: var(--text-muted);
+    background: var(--glass-bg);
+    border: 1px solid var(--border-faint);
+    border-radius: 8px;
+    padding: 0.375em 0.75em;
+    cursor: pointer;
+    transition: color .2s ease, border-color .2s ease;
+  }
+  .btn:hover {
+    color: var(--cyan);
+    border-color: var(--border-cyan);
+  }
+
+  /* back to top */
+  .back-top {
+    position: fixed;
+    right: 2.25em;
+    bottom: 2.25em;
+    width: 2.75em;
+    height: 2.75em;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-muted);
+    background: var(--glass-bg);
+    border: 1px solid var(--border-soft);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    cursor: pointer;
+    z-index: 90;
+    transition: color .2s ease, border-color .2s ease, box-shadow .2s ease, transform .2s ease;
+  }
+  .back-top:hover {
+    color: var(--cyan);
+    border-color: var(--border-cyan);
+    box-shadow: 0 0 24px rgba(34, 211, 238, 0.25);
+    transform: translateY(-2px);
+  }
+  .back-top svg { display: block; }
+  .back-top-tip {
+    position: absolute;
+    right: calc(100% + 0.75em);
+    white-space: nowrap;
+    font-family: var(--font-mono);
+    font-size: 0.75em;
+    color: var(--cyan);
+    background: var(--glass-bg);
+    border: 1px solid var(--border-cyan);
+    border-radius: 8px;
+    padding: 0.375em 0.75em;
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    opacity: 0;
+    transform: translateX(0.5em);
+    transition: opacity .2s ease, transform .2s ease;
+    pointer-events: none;
+  }
+  .back-top:hover .back-top-tip {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  @media (max-width: 768px) {
+    .back-top { right: 1.25em; bottom: 1.25em; width: 2.5em; height: 2.5em; }
+    .article-grid { grid-template-columns: 1fr; gap: 1.5em; }
+    .article { padding: 1.375em 1.25em; }
+    .title { font-size: 1.625em; }
+    .subtitle { font-size: 0.9375em; }
+  }
+</style>
+
+<script is:inline>
+  (function () {
+    var buttons = document.querySelectorAll('.article-footer .btn[data-action]');
+    buttons.forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var action = btn.getAttribute('data-action');
+        if (action === 'copy') {
+          var url = window.location.href;
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(url).then(function () {
+              var prev = btn.textContent;
+              btn.textContent = '$ copied!';
+              setTimeout(function () { btn.textContent = prev; }, 1600);
+            });
+          }
+        } else if (action === 'share') {
+          if (navigator.share) {
+            navigator.share({ url: window.location.href, title: document.title });
+          } else if (navigator.clipboard) {
+            navigator.clipboard.writeText(window.location.href);
+            var prev = btn.textContent;
+            btn.textContent = '$ link_copied';
+            setTimeout(function () { btn.textContent = prev; }, 1600);
+          }
+        }
+      });
+    });
+
+    var backTop = document.querySelector('.back-top');
+    if (backTop) {
+      backTop.addEventListener('click', function () {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    }
+  })();
+</script>
