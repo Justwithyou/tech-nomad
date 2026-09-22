@@ -58,7 +58,7 @@ html, body {
   background: var(--bg);
   font-family: var(--font-sans);
   color: var(--text-primary);
-  overflow-x: hidden;
+  overflow-x: clip;
   width: 100%;
 }
 
