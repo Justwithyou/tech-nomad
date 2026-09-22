@@ -1,8 +1,8 @@
 import { defineConfig } from 'astro/config';
 
 export default defineConfig({
-  site: 'https://yourusername.github.io',
-  base: '/Tech-Nomad/',
+  site: 'https://justwithyou.github.io',
+  base: '/tech-nomad/',
   devToolbar: { enabled: false },
   markdown: {
     shikiConfig: {
