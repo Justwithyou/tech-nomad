@@ -1,6 +1,8 @@
 # Tech-Nomad
 
-深色星空主题的个人技术博客，基于 [Astro](https://astro.build/) 构建，内容以 Markdown 编写，支持代码高亮、目录大纲、标签云等功能，适合部署到 GitHub Pages。
+深色星空主题的个人技术博客，基于 [Astro](https://astro.build/) 构建，内容以 Markdown 编写，支持代码高亮、目录大纲、标签云等功能。
+
+在线访问：<https://justwithyou.github.io/tech-nomad/>
 
 ## 技术栈
 
@@ -25,7 +27,7 @@ npm install
 
 # 启动开发服务器
 npm run dev
-# 本地访问 http://localhost:4321/Tech-Nomad/
+# 本地访问 http://localhost:4321/tech-nomad/
 
 # 生产构建
 npm run build
@@ -67,13 +69,3 @@ Frontmatter 字段：
 | `author` / `authorInitials` / `authorRole` | 否 | 作者信息 |
 
 支持的 Markdown 元素：标题、粗体/斜体、行内代码、链接、列表、引用块、代码块（语法高亮）、表格等。
-
-## 部署
-
-默认 `base` 配置为 `/Tech-Nomad/`（对应 GitHub Pages 项目站点）。部署前请在 `astro.config.mjs` 中把 `site` 改为你的站点地址：
-
-```js
-site: 'https://yourusername.github.io',
-```
-
-构建后把 `dist/` 目录的内容部署到目标仓库即可。
