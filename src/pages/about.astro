@@ -4,36 +4,45 @@ import SectionHeader from '../components/SectionHeader.astro';
 ---
 
 <Base title="about — Tech-Nomad·" active="about">
-  <SectionHeader title="about" />
-  <article class="glass bio">
-    <div class="identity">
-      <span class="avatar">YN</span>
-      <div class="who">
-        <h1 class="name">Your Name</h1>
-        <p class="role">developer · writer · nomad</p>
+  <div class="page">
+    <SectionHeader title="about" />
+    <article class="glass bio">
+      <div class="identity">
+        <span class="avatar">Z</span>
+        <div class="who">
+          <h1 class="name">Zhou</h1>
+          <p class="role">developer · writer · nomad</p>
+        </div>
       </div>
-    </div>
 
-    <p>
-      Hi — I'm a developer drifting between code, ink, and starlight. I build
-      small tools, write about AI safety and tooling, and keep a slow log of
-      what I learn off the grid.
-    </p>
-    <p>
-      This site is a personal starfield — part notebook, part workshop, part
-      signal flare. If something here is useful, take it and pass it on.
-    </p>
+      <p>
+        Hi — I'm a developer drifting between code, ink, and starlight. I build
+        small tools, write about AI safety and tooling, and keep a slow log of
+        what I learn off the grid.
+      </p>
+      <p>
+        This site is a personal starfield — part notebook, part workshop, part
+        signal flare. If something here is useful, take it and pass it on.
+      </p>
 
-    <ul class="facts">
-      <li><span class="k">// location</span><span class="v">off-grid, +08:00</span></li>
-      <li><span class="k">// stack</span><span class="v">astro · ts · rust · go</span></li>
-      <li><span class="k">// reading</span><span class="v">llm-safety papers</span></li>
-      <li><span class="k">// contact</span><span class="v">echo "hi" | mail nomad@</span></li>
-    </ul>
-  </article>
+      <ul class="facts">
+        <li><span class="k">// location</span><span class="v">off-grid, +08:00</span></li>
+        <li><span class="k">// stack</span><span class="v">astro · ts · rust · go</span></li>
+        <li><span class="k">// reading</span><span class="v">llm-safety papers</span></li>
+        <li><span class="k">// contact</span><span class="v">echo "hi" | mail nomad@</span></li>
+      </ul>
+    </article>
+  </div>
 </Base>
 
 <style>
+  .page {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 3em 0;
+  }
   .bio {
     padding: 1.75em 2em;
     color: var(--text-body);
@@ -60,7 +69,7 @@ import SectionHeader from '../components/SectionHeader.astro';
     font-family: var(--font-mono);
     font-size: 1.125em;
     font-weight: 700;
-    color: #0a0a12;
+    color: var(--bg);
     background: linear-gradient(135deg, var(--cyan), var(--indigo-light), var(--purple));
   }
   .name {

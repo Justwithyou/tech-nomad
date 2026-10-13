@@ -23,12 +23,16 @@ const year = new Date().getFullYear();
     <meta name="generator" content={Astro.generator} />
     <link rel="icon" type="image/svg+xml" href={import.meta.env.BASE_URL + 'favicon.svg'} />
     <title>{title}</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap"
-      rel="stylesheet"
-    />
+    <script is:inline>
+      // 主题防闪烁：在首屏渲染前读取本地偏好，避免浅色用户先看到深色闪一下
+      (function () {
+        try {
+          if (localStorage.getItem('theme') === 'light') {
+            document.documentElement.setAttribute('data-theme', 'light');
+          }
+        } catch (e) {}
+      })();
+    </script>
   </head>
   <body>
     <Starfield />
@@ -45,7 +49,8 @@ const year = new Date().getFullYear();
 
 <style>
   main {
-    display: block;
+    display: flex;
+    flex-direction: column;
     flex: 1;
   }
   .content {

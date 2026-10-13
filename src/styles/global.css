@@ -1,3 +1,12 @@
+@import '@fontsource/nunito/400.css';
+@import '@fontsource/nunito/600.css';
+@import '@fontsource/nunito/700.css';
+@import '@fontsource/nunito/800.css';
+@import '@fontsource/nunito/900.css';
+@import '@fontsource/jetbrains-mono/400.css';
+@import '@fontsource/jetbrains-mono/500.css';
+@import '@fontsource/jetbrains-mono/700.css';
+
 :root {
   /* base */
   --bg: #010103;
@@ -50,6 +59,47 @@
   /* code block */
   --code-bg: rgba(15, 23, 50, 0.5);
   --code-bar-bg: rgba(30, 41, 75, 0.5);
+}
+
+/* Light theme — 浅色主题变量覆盖 */
+[data-theme='light'] {
+  --bg: #ffffff;
+
+  --text-title: #1e293b;
+  --text-primary: #334155;
+  --text-body: #475569;
+  --text-muted: #64748b;
+  --text-meta: #64748b;
+  --text-footer: #94a3b8;
+  --sep: #cbd5e1;
+
+  --cyan: #0891b2;
+  --indigo: #6366f1;
+  --indigo-light: #6366f1;
+  --indigo-deep: #4f46e5;
+  --purple: #9333ea;
+  --pink: #db2777;
+  --green: #16a34a;
+  --amber: #d97706;
+
+  --border-faint: rgba(99, 102, 241, 0.20);
+  --border-soft: rgba(99, 102, 241, 0.32);
+  --border-cyan: rgba(8, 145, 178, 0.40);
+
+  --glass-bg: rgba(255, 255, 255, 0.62);
+  --glass-bg-raised: rgba(255, 255, 255, 0.78);
+  --glass-bar-bg: rgba(255, 255, 255, 0.55);
+
+  --post-hover-bg: rgba(255, 255, 255, 0.82);
+  --project-normal-bg: rgba(255, 255, 255, 0.62);
+
+  --code-bg: rgba(240, 243, 250, 0.75);
+  --code-bar-bg: rgba(240, 243, 250, 0.55);
+}
+
+/* 浅色主题下隐藏星空 canvas，露出浅色背景 */
+[data-theme='light'] #sky {
+  display: none !important;
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }

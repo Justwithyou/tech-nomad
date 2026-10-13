@@ -8,8 +8,22 @@ const { date = '' } = Astro.props;
 <div class="status-bar">
   <span class="dot">●&nbsp;</span>
   <span>STELLAR ONLINE</span>
-  <span style="margin-left: auto;">{date}</span>
+  <span class="today" style="margin-left: auto;">{date}</span>
 </div>
+
+<script>
+  // 顶部显示浏览器本地的实时日期时间，避免静态构建日期一直停留在旧日期
+  const el = document.querySelector('.status-bar .today');
+  if (el) {
+    const pad = (n) => String(n).padStart(2, '0');
+    const tick = () => {
+      const now = new Date();
+      el.textContent = `${now.getFullYear()}.${pad(now.getMonth() + 1)}.${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+    };
+    tick();
+    setInterval(tick, 1000);
+  }
+</script>
 
 <style>
   .status-bar {

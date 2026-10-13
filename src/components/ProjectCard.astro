@@ -1,13 +1,8 @@
 ---
+import type { Project } from '../data/projects';
+
 interface Props {
-  project: {
-    name: string;
-    desc: string;
-    url?: string;
-    github: string;
-    featured: boolean;
-    accent: string;
-  };
+  project: Project;
 }
 const { project } = Astro.props;
 const { name, desc, url, github, featured, accent } = project;

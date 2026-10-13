@@ -13,14 +13,11 @@ interface Props {
   next: CollectionEntry<'blog'> | null;
 }
 const { post, headings, prev, next } = Astro.props;
-const base = import.meta.env.BASE_URL;
 const accent = post.data.accent ?? 'cyan';
 const dateStr = post.data.published.toISOString().slice(0, 10).replace(/-/g, '.');
 ---
 
 <div class={`post-wrap accent-${accent}`}>
-  <a class="back" href={base + 'blog'}>← cd ../blog</a>
-
   <div class="article-grid">
     <article class="article glass">
       <header class="head">
@@ -74,25 +71,15 @@ const dateStr = post.data.published.toISOString().slice(0, 10).replace(/-/g, '.'
 </div>
 
 <style>
-  .back {
-    display: inline-block;
-    margin: 1.75em 0 1.25em;
-    font-family: var(--font-mono);
-    font-size: 0.8125em;
-    color: var(--text-meta);
-    transition: color .2s ease;
-  }
-  .back:hover { color: var(--cyan); }
-
   .article-grid {
     display: grid;
     grid-template-columns: 1fr 240px;
     gap: 32px;
     align-items: start;
+    margin-top: 2.5em;
   }
   .article {
     padding: 1.75em 2em;
-    border-left: 3px solid var(--accent);
   }
 
   .head { margin-bottom: 2.5em; padding-bottom: 2em; border-bottom: 1px solid var(--border-faint); }
@@ -149,7 +136,7 @@ const dateStr = post.data.published.toISOString().slice(0, 10).replace(/-/g, '.'
     font-family: var(--font-mono);
     font-size: 0.8125em;
     font-weight: 700;
-    color: #0a0a12;
+    color: var(--bg);
     background: linear-gradient(135deg, var(--cyan), var(--indigo-light), var(--purple));
   }
   .author-info {

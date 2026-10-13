@@ -1,10 +1,11 @@
-﻿---
+---
 import { getCollection } from 'astro:content';
 import Terminal from '../components/Terminal.astro';
 import SectionHeader from '../components/SectionHeader.astro';
 import PostCard from '../components/PostCard.astro';
 import ProjectCard from '../components/ProjectCard.astro';
 import TagCloud from '../components/TagCloud.astro';
+import { projects } from '../data/projects';
 
 const base = import.meta.env.BASE_URL;
 
@@ -15,11 +16,6 @@ const latest = posts.slice(0, 5);
 const allTags = Array.from(
   new Set(posts.flatMap((p) => p.data.tags ?? []))
 ).slice(0, 12);
-
-const projects = [
-  { name: 'aggregate-graph', desc: '数据聚合图可视化', url: 'https://drawhub-pied.vercel.app/', github: 'https://github.com/Justwithyou/aggregate-graph', featured: true, accent: 'cyan' },
-  { name: 'markdown-editor', desc: '在线 Markdown 编辑器', github: 'https://github.com/Justwithyou/Markdown-Editor', featured: false, accent: 'indigo' },
-];
 ---
 
 <section class="hero">
@@ -49,7 +45,7 @@ const projects = [
     <div class="post-list">
       {latest.map((post) => <PostCard post={post} />)}
     </div>
-    <div class="view-all"><span class="arrow">›</span> view all posts →</div>
+    <a href={base + 'blog'} class="view-all"><span class="arrow">›</span> view all posts →</a>
   </div>
   <aside class="sidebar">
     <SectionHeader title="projects" />
@@ -70,6 +66,11 @@ const projects = [
     gap: 1.5em;
     padding: 3.5em 0 3em;
     border-bottom: 1px solid var(--border-faint);
+    font-size: 1.08em;
+  }
+  .hero-right {
+    display: grid;
+    align-items: center;
   }
   .hero-comment {
     font-size: 0.75em;
@@ -124,7 +125,7 @@ const projects = [
   }
   .tag-tools {
     background: rgba(34, 211, 238, 0.15);
-    color: #67e8f9;
+    color: var(--cyan);
     border: 1px solid rgba(34, 211, 238, 0.4);
   }
 
@@ -132,6 +133,7 @@ const projects = [
     display: grid;
     grid-template-columns: 1.5fr 1fr;
     margin-top: 0.5em;
+    font-size: 1.08em;
   }
   .posts {
     padding: 2em 2em 2em 0;
@@ -144,6 +146,7 @@ const projects = [
     font-size: 0.8em;
     color: var(--text-meta);
     cursor: pointer;
+    text-decoration: none;
   }
   .view-all:hover { color: var(--cyan); }
   .view-all .arrow { color: var(--cyan); }

@@ -2,22 +2,23 @@
 import Base from '../layouts/Base.astro';
 import SectionHeader from '../components/SectionHeader.astro';
 import ProjectCard from '../components/ProjectCard.astro';
-
-const projects = [
-  { name: 'aggregate-graph', desc: '数据聚合图可视化', url: 'https://drawhub-pied.vercel.app/', github: 'https://github.com/Justwithyou/aggregate-graph', featured: true, accent: 'cyan' },
-  { name: 'markdown-editor', desc: '在线 Markdown 编辑器', github: 'https://github.com/Justwithyou/Markdown-Editor', featured: false, accent: 'indigo' },
-];
+import { projects } from '../data/projects';
 ---
 
 <Base title="projects — Tech-Nomad·" active="projects">
-  <SectionHeader title="projects" />
-  <p class="intro">// things I build under the stars — small tools, mostly for myself.</p>
-  <div class="grid">
-    {projects.map((p) => <ProjectCard project={p} />)}
+  <div class="page">
+    <SectionHeader title="projects" />
+    <p class="intro">// things I build under the stars — small tools, mostly for myself.</p>
+    <div class="grid">
+      {projects.map((p) => <ProjectCard project={p} />)}
+    </div>
   </div>
 </Base>
 
 <style>
+  .page {
+    padding-top: 2.5em;
+  }
   .intro {
     color: var(--text-muted);
     font-family: var(--font-mono);

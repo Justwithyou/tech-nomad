@@ -1,4 +1,4 @@
-﻿---
+---
 import { getCollection } from 'astro:content';
 import Base from '../../layouts/Base.astro';
 import SectionHeader from '../../components/SectionHeader.astro';
@@ -9,13 +9,18 @@ const posts = (await getCollection('blog', ({ data }) => !data.draft))
 ---
 
 <Base title="blog — Tech-Nomad·" active="blog">
-  <SectionHeader title="all_posts" />
-  <div class="post-list">
-    {posts.map((post) => <PostCard post={post} />)}
+  <div class="page">
+    <SectionHeader title="all_posts" />
+    <div class="post-list">
+      {posts.map((post) => <PostCard post={post} />)}
+    </div>
   </div>
 </Base>
 
 <style>
+  .page {
+    padding-top: 2.5em;
+  }
   .post-list {
     display: flex;
     flex-direction: column;
