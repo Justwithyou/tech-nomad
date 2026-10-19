@@ -29,8 +29,16 @@ const filtered = headings.filter((h) => h.depth === 2 || h.depth === 3);
     position: sticky;
     top: 50%;
     transform: translateY(-50%);
+    max-height: calc(100vh - 6em);
+    display: flex;
+    flex-direction: column;
     font-family: var(--font-mono);
     font-size: 13px;
+  }
+  .toc-nav {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
   }
   .toc-nav ul {
     list-style: none;
