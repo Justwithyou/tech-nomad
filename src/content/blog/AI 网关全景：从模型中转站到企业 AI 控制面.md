@@ -1,7 +1,7 @@
 ---
 title: "AI 网关全景：从模型中转站到企业 AI 控制面"
 description: "从定义与本质出发，系统梳理 AI 网关的五大品类（LLM 网关、MCP 网关、A2A 网关、AI 安全网关、私有 AI 网关），深入 2026 年最前沿的工程与学术进展，最后展望这个赛道的融合与终局。"
-pubDate: 2026-10-19
+published: 2026-10-19
 tags: ["ai", "gateway", "llm", "mcp", "architecture"]
 accent: cyan
 ---
