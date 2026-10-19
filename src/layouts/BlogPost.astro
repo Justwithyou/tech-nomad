@@ -235,6 +235,14 @@ const dateStr = post.data.published.toISOString().slice(0, 10).replace(/-/g, '.'
   .article-body :global(tr:nth-child(even) td) {
     background: var(--glass-bg);
   }
+  .article-body :global(.mermaid) {
+    margin: 1.5em 0;
+    overflow-x: auto;
+  }
+  .article-body :global(.mermaid svg) {
+    max-width: 100%;
+    height: auto;
+  }
 
   .article-footer {
     margin-top: 1.75em;
@@ -372,4 +380,31 @@ const dateStr = post.data.published.toISOString().slice(0, 10).replace(/-/g, '.'
       });
     }
   })();
+</script>
+
+<script>
+  const els = document.querySelectorAll('.article-body .mermaid');
+  if (els.length) {
+    import('mermaid').then(({ default: mermaid }) => {
+      const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+      mermaid.initialize({
+        startOnLoad: false,
+        securityLevel: 'loose',
+        theme: isLight ? 'default' : 'dark',
+      });
+
+      els.forEach((el, i) => {
+        const code = (el.textContent || '').trim();
+        if (!code) return;
+        mermaid
+          .render('mermaid-article-' + i, code)
+          .then(({ svg }) => {
+            el.innerHTML = svg;
+          })
+          .catch((err) => {
+            el.textContent = '[mermaid 渲染失败] ' + (err && err.message ? err.message : err);
+          });
+      });
+    });
+  }
 </script>
