@@ -4,6 +4,9 @@ description: "从定义与本质出发，系统梳理 AI 网关的五大品类�
 published: 2026-10-19
 tags: ["ai", "gateway", "llm", "mcp", "architecture"]
 accent: cyan
+author: "Zhou"
+authorInitials: "Z"
+authorRole: "developer · writer"
 ---
 
 ## 引言

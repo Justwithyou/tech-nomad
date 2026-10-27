@@ -509,8 +509,23 @@ const dateStr = post.data.published.toISOString().slice(0, 10).replace(/-/g, '.'
       apply();
     }
     function open(svg) {
+      const rect = svg.getBoundingClientRect();
+      const maxW = window.innerWidth * 0.9;
+      const maxH = window.innerHeight * 0.88;
+      const fit = rect.width && rect.height ? Math.min(1, maxW / rect.width, maxH / rect.height) : 1;
+
+      const clone = svg.cloneNode(true);
+      // 显式设定克隆图尺寸：否则 mermaid svg 的 width:auto + 内联 max-width 会在灯箱中塌陷成"白点"
+      clone.removeAttribute('width');
+      clone.removeAttribute('height');
+      clone.style.width = rect.width * fit + 'px';
+      clone.style.height = rect.height * fit + 'px';
+      clone.style.maxWidth = 'none';
+      clone.style.maxHeight = 'none';
+      clone.style.display = 'block';
+
       inner.innerHTML = '';
-      inner.appendChild(svg.cloneNode(true));
+      inner.appendChild(clone);
       reset();
       lightbox.classList.add('open');
       document.body.style.overflow = 'hidden';
