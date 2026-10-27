@@ -238,6 +238,7 @@ const dateStr = post.data.published.toISOString().slice(0, 10).replace(/-/g, '.'
   .article-body :global(.mermaid) {
     margin: 1.5em 0;
     overflow-x: auto;
+    cursor: zoom-in;
   }
   .article-body :global(.mermaid svg) {
     max-width: 100%;
@@ -345,6 +346,74 @@ const dateStr = post.data.published.toISOString().slice(0, 10).replace(/-/g, '.'
   }
 </style>
 
+<style is:global>
+  /* Mermaid 图灯箱 */
+  .mermaid-lightbox {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    background: rgba(0, 0, 0, 0.78);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    display: flex;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+  }
+  .mermaid-lightbox.open {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .ml-close {
+    position: absolute;
+    top: 1.25em;
+    right: 1.25em;
+    z-index: 1001;
+    width: 2.5em;
+    height: 2.5em;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.28);
+    background: rgba(255, 255, 255, 0.12);
+    color: #fff;
+    font-size: 1.25em;
+    line-height: 1;
+    cursor: pointer;
+    transition: background 0.2s ease, border-color 0.2s ease;
+  }
+  .ml-close:hover {
+    background: rgba(255, 255, 255, 0.26);
+    border-color: rgba(255, 255, 255, 0.5);
+  }
+  .ml-stage {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    cursor: grab;
+    touch-action: none;
+  }
+  .ml-stage.dragging { cursor: grabbing; }
+  .ml-inner {
+    background: var(--bg);
+    border-radius: 10px;
+    padding: 0.75em;
+    box-shadow: 0 18px 60px rgba(0, 0, 0, 0.5);
+    will-change: transform;
+    transform-origin: center center;
+    max-width: 92vw;
+    max-height: 92vh;
+    cursor: grab;
+  }
+  .ml-inner svg {
+    max-width: 90vw;
+    max-height: 88vh;
+    width: auto;
+    height: auto;
+    display: block;
+  }
+</style>
+
 <script is:inline>
   (function () {
     var buttons = document.querySelectorAll('.article-footer .btn[data-action]');
@@ -407,4 +476,101 @@ const dateStr = post.data.published.toISOString().slice(0, 10).replace(/-/g, '.'
       });
     });
   }
+
+  // Mermaid 图灯箱：点击放大、滚轮缩放、拖拽平移、双击复位、ESC / 关闭按钮关闭
+  (function () {
+    const articleBody = document.querySelector('.article-body');
+    if (!articleBody || !document.querySelector('.article-body .mermaid')) return;
+
+    const lightbox = document.createElement('div');
+    lightbox.className = 'mermaid-lightbox';
+    lightbox.setAttribute('role', 'dialog');
+    lightbox.setAttribute('aria-modal', 'true');
+    lightbox.innerHTML = `
+      <button class="ml-close" aria-label="关闭" title="关闭 (ESC)">×</button>
+      <div class="ml-stage">
+        <div class="ml-inner"></div>
+      </div>`;
+    document.body.appendChild(lightbox);
+
+    const inner = lightbox.querySelector('.ml-inner');
+    const stage = lightbox.querySelector('.ml-stage');
+    const closeBtn = lightbox.querySelector('.ml-close');
+
+    let st = { x: 0, y: 0, scale: 1 };
+    let dragging = false;
+    let startX = 0, startY = 0, baseX = 0, baseY = 0;
+
+    function apply() {
+      inner.style.transform = `translate(${st.x}px, ${st.y}px) scale(${st.scale})`;
+    }
+    function reset() {
+      st = { x: 0, y: 0, scale: 1 };
+      apply();
+    }
+    function open(svg) {
+      inner.innerHTML = '';
+      inner.appendChild(svg.cloneNode(true));
+      reset();
+      lightbox.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+    function close() {
+      lightbox.classList.remove('open');
+      document.body.style.overflow = '';
+      inner.innerHTML = '';
+    }
+
+    articleBody.addEventListener('click', (e) => {
+      const m = e.target.closest('.mermaid');
+      if (!m) return;
+      const svg = m.querySelector('svg');
+      if (svg) open(svg);
+    });
+
+    closeBtn.addEventListener('click', close);
+    lightbox.addEventListener('click', (e) => {
+      if (e.target === lightbox || e.target === stage) close();
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && lightbox.classList.contains('open')) close();
+    });
+
+    stage.addEventListener(
+      'wheel',
+      (e) => {
+        e.preventDefault();
+        const factor = e.deltaY < 0 ? 1.1 : 1 / 1.1;
+        st.scale = Math.min(8, Math.max(0.4, st.scale * factor));
+        apply();
+      },
+      { passive: false }
+    );
+
+    stage.addEventListener('mousedown', (e) => {
+      dragging = true;
+      startX = e.clientX;
+      startY = e.clientY;
+      baseX = st.x;
+      baseY = st.y;
+      stage.classList.add('dragging');
+    });
+    window.addEventListener('mousemove', (e) => {
+      if (!dragging) return;
+      st.x = baseX + (e.clientX - startX);
+      st.y = baseY + (e.clientY - startY);
+      apply();
+    });
+    window.addEventListener('mouseup', () => {
+      if (dragging) {
+        dragging = false;
+        stage.classList.remove('dragging');
+      }
+    });
+
+    inner.addEventListener('dblclick', (e) => {
+      e.preventDefault();
+      reset();
+    });
+  })();
 </script>
